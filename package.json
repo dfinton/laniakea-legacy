@@ -2,7 +2,6 @@
   "name": "laniakea",
   "version": "0.0.0",
   "description": "Laniakea Simulator Project",
-  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +14,8 @@
   "bugs": {
     "url": "https://github.com/dfinton/laniakea/issues"
   },
-  "homepage": "https://github.com/dfinton/laniakea#readme"
+  "homepage": "https://github.com/dfinton/laniakea#readme",
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
 }
