@@ -1,0 +1,11 @@
+{
+  "name": "laniakea-server",
+  "version": "0.0.0",
+  "description": "Server package for the laniakea project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Finton",
+  "license": "ISC"
+}
