@@ -1,0 +1,15 @@
+{
+  "name": "laniakea-engine",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Finton",
+  "license": "ISC",
+  "dependencies": {
+    "rethinkdb": "^2.4.2"
+  }
+}
