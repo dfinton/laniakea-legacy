@@ -1,17 +1,18 @@
-const rethinkdb = require('rethinkdb');
+const dbConnection = require('./db-connection');
+const initGameInfo = require('./init-game-info');
 
-const runServer = async () => {
-  let connection;
+const runEngine = async () => {
+  const connection = await dbConnection.init({
+    host: 'localhost',
+    port: 28015,
+  });
 
-  try {
-    connection = await rethinkdb.connect({
-      host: 'localhost',
-      port: 28015,
-      db: 'laniakea',
-    });
-  } catch(err) {
-    console.log(err);
-  }
+  await initGameInfo(connection, {
+    serverInfoDb: 'game_info',
+    adminUsername: 'admin',
+    adminPassword: 'admin',
+    saltGenRounds: 10,
+  });
 };
 
-runServer();
+runEngine();
