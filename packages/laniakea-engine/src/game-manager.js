@@ -67,15 +67,17 @@ const initGame = async (connection, options) => {
   await rethinkdb.table('games').insert(game).run(connection);
 
   // Create game table skeletons
-  await gameDb.tableCreate('players').run(connection);
+  await Promise.all([
+    gameDb.tableCreate('players').run(connection),
+    gameDb.tableCreate('galaxies').run(connection),
+    gameDb.tableCreate('planetary_systems').run(connection),
+    gameDb.tableCreate('systems').run(connection),
+  ]);
 
-  await gameDb.tableCreate('galaxies').run(connection);
-
-  await gameDb.tableCreate('planetary_systems').run(connection);
-  await gameDb.table('planetary_systems').indexCreate('galaxy_id').run(connection);
-
-  await gameDb.tableCreate('systems').run(connection);
-  await gameDb.table('systems').indexCreate('planetary_system_id').run(connection);
+  await Promise.all([
+    gameDb.table('systems').indexCreate('planetary_system_id').run(connection),
+    gameDb.table('planetary_systems').indexCreate('galaxy_id').run(connection),
+  ]);
 };
 
 const dropGame = async (connection, options) => {
@@ -89,7 +91,7 @@ const dropGame = async (connection, options) => {
     return false;
   }
 
-  rethinkdb.dbDrop(gameDbName).run(connection);
+  await rethinkdb.dbDrop(gameDbName).run(connection);
 
   return true;
 };
