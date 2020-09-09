@@ -86,4 +86,18 @@ module.exports = async (connection) => {
     .run(connection);
 
   const bodyKey = bodyKeys[0];
+
+  // Create the test biome
+  const biomesTable = gameDb.table('biomes');
+
+  const defaultBiome = {
+    name: 'North America',
+    body_id: bodyKey,
+  };
+
+  const {generated_keys: biomeKeys} = await biomesTable
+    .insert(defaultBiome)
+    .run(connection);
+
+  const biomeKey = biomeKeys[0];
 };

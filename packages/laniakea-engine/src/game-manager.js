@@ -14,6 +14,7 @@ initGameInfo = async (connection, options) => {
 
   if (dbs.includes(serverInfoDb)) {
     connection.use(serverInfoDb);
+
     return false;
   }
 
@@ -36,6 +37,7 @@ initGameInfo = async (connection, options) => {
 
   // Create the game metadata table for tracking which databases belong to the game
   await rethinkdb.tableCreate('games').run(connection);
+  await rethinkdb.table('games').indexCreate('db').run(connection);
 
   // All done
   return true;
@@ -47,24 +49,36 @@ const initGame = async (connection, options) => {
     gameDbName,
   } = options;
 
+  // See if three is a game record for the new game already in place
+  const games = await rethinkdb.table('games').getAll(gameDbName, {index: 'db'}).coerceTo('array').run(connection);
+
+  if (games.length > 0) {
+    console.warn(`Game already exist for game name ${gameDbName} in game records`);
+
+    return false;
+  }
+
   // If the game database already exists we assume the init has already run
   const dbs = await rethinkdb.dbList().run(connection);
 
   if (dbs.includes(gameDbName)) {
+    console.warn(`Game already exist for game name ${gameDbName} in database`);
+
     return false;
   }
 
-  // Create the game database first
-  await rethinkdb.dbCreate(gameDbName).run(connection);
-
-  const gameDb = rethinkdb.db(gameDbName);
-
+  // Add the record for the game we're creating and initialize the database
   const game = {
     name: gameName,
     db: gameDbName,
   };
 
-  await rethinkdb.table('games').insert(game).run(connection);
+  await Promise.all([
+    rethinkdb.table('games').insert(game).run(connection),
+    rethinkdb.dbCreate(gameDbName).run(connection),
+  ]);
+
+  const gameDb = rethinkdb.db(gameDbName);
 
   // Create game table skeletons
   await Promise.all([
@@ -74,10 +88,15 @@ const initGame = async (connection, options) => {
     gameDb.tableCreate('stars').run(connection),
     gameDb.tableCreate('systems').run(connection),
     gameDb.tableCreate('bodies').run(connection),
+    gameDb.tableCreate('biomes').run(connection),
+    gameDb.tableCreate('populations').run(connection),
   ]);
 
-  // Set up "foriegn keys"
+  // Set up foriegn keys indeces
   await Promise.all([
+    gameDb.table('populations').indexCreate('biome_id').run(connection),
+    gameDb.table('populations').indexCreate('player_id').run(connection),
+    gameDb.table('biomes').indexCreate('body_id').run(connection),
     gameDb.table('bodies').indexCreate('system_id').run(connection),
     gameDb.table('systems').indexCreate('planetary_system_id').run(connection),
     gameDb.table('stars').indexCreate('planetary_system_id').run(connection),
@@ -93,15 +112,23 @@ const dropGame = async (connection, options) => {
     gameDbName,
   } = options;
 
-  // If there's nothing to drop, just exit
-  const dbs = await rethinkdb.dbList().run(connection);
+  // Remove all references to the game database from the game_info table
+  const {deleted} = await rethinkdb.table('games').getAll(gameDbName, {index: 'db'}).delete().run(connection);
 
-  if (!dbs.includes(gameDbName)) {
+  if (deleted === 0) {
+    console.warn(`No game records exist for database "${gameDbName}"`);
+
     return false;
   }
 
-  // Drop the entire database
-  await rethinkdb.dbDrop(gameDbName).run(connection);
+  // Drop the entire database after verifying the game records was successfully deleted
+  try {
+    await rethinkdb.dbDrop(gameDbName).run(connection);
+  } catch(err) {
+    console.warn(err.message);
+
+    return false;
+  }
 
   // All done
   return true;
