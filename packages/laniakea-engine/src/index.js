@@ -24,6 +24,7 @@ const runEngine = async () => {
     gameDbName: 'test_game',
   });
 
+  // TODO: remove this once we have a proper setup GUI
   await initTestGame(connection);
 };
 

@@ -58,4 +58,32 @@ module.exports = async (connection) => {
     .run(connection);
 
   const systemKey = systemKeys[0];
+
+  // Create the test star
+  const starsTable = gameDb.table('stars');
+
+  const defaultStar = {
+    name: 'Sol',
+    planetary_system_id: planetarySystemKey,
+  };
+
+  const {generated_keys: starKeys} = await starsTable
+    .insert(defaultStar)
+    .run(connection);
+
+  const starKey = starKeys[0];
+
+  // Create the test planet
+  const bodiesTable = gameDb.table('bodies');
+
+  const defaultBody = {
+    name: 'Earth',
+    system_id: systemKey,
+  };
+
+  const {generated_keys: bodyKeys} = await bodiesTable
+    .insert(defaultBody)
+    .run(connection);
+
+  const bodyKey = bodyKeys[0];
 };

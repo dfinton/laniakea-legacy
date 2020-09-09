@@ -71,13 +71,21 @@ const initGame = async (connection, options) => {
     gameDb.tableCreate('players').run(connection),
     gameDb.tableCreate('galaxies').run(connection),
     gameDb.tableCreate('planetary_systems').run(connection),
+    gameDb.tableCreate('stars').run(connection),
     gameDb.tableCreate('systems').run(connection),
+    gameDb.tableCreate('bodies').run(connection),
   ]);
 
+  // Set up "foriegn keys"
   await Promise.all([
+    gameDb.table('bodies').indexCreate('system_id').run(connection),
     gameDb.table('systems').indexCreate('planetary_system_id').run(connection),
+    gameDb.table('stars').indexCreate('planetary_system_id').run(connection),
     gameDb.table('planetary_systems').indexCreate('galaxy_id').run(connection),
   ]);
+
+  // All done
+  return true;
 };
 
 const dropGame = async (connection, options) => {
@@ -85,14 +93,17 @@ const dropGame = async (connection, options) => {
     gameDbName,
   } = options;
 
+  // If there's nothing to drop, just exit
   const dbs = await rethinkdb.dbList().run(connection);
 
   if (!dbs.includes(gameDbName)) {
     return false;
   }
 
+  // Drop the entire database
   await rethinkdb.dbDrop(gameDbName).run(connection);
 
+  // All done
   return true;
 };
 
