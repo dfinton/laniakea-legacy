@@ -12,11 +12,11 @@ module.exports = async (connection) => {
     password: null,
   };
 
-  const {generated_keys: playerKeys} = await playersTable
-    .insert(defaultPlayer)
-    .run(connection);
-
-  const playerKey = playerKeys[0];
+  const {
+    generated_keys: [
+      playerKey,
+    ],
+  } = await playersTable.insert(defaultPlayer).run(connection);
 
   // Create the test galaxy
   const galaxiesTable = gameDb.table('galaxies');
@@ -25,11 +25,11 @@ module.exports = async (connection) => {
     name: 'Milky Way',
   };
 
-  const {generated_keys: galaxyKeys} = await galaxiesTable
-    .insert(defaultGalaxy)
-    .run(connection);
-
-  const galaxyKey = galaxyKeys[0];
+  const {
+    generated_keys: [
+      galaxyKey,
+    ],
+  } = await galaxiesTable.insert(defaultGalaxy).run(connection);
 
   // Create the test planetary system
   const planetarySystemsTable = gameDb.table('planetary_systems');
@@ -39,11 +39,11 @@ module.exports = async (connection) => {
     galaxy_id: galaxyKey,
   };
 
-  const {generated_keys: planetarySystemKeys} = await planetarySystemsTable
-    .insert(defaultPlanetarySystem)
-    .run(connection);
-
-  const planetarySystemKey = planetarySystemKeys[0];
+  const {
+    generated_keys: [
+      planetarySystemKey,
+    ],
+  } = await planetarySystemsTable.insert(defaultPlanetarySystem).run(connection);
 
   // Create the test system
   const systemsTable = gameDb.table('systems');
@@ -53,11 +53,11 @@ module.exports = async (connection) => {
     planetary_system_id: planetarySystemKey,
   };
 
-  const {generated_keys: systemKeys} = await systemsTable
-    .insert(defaultSystem)
-    .run(connection);
-
-  const systemKey = systemKeys[0];
+  const {
+    generated_keys: [
+      systemKey,
+    ],
+  } = await systemsTable.insert(defaultSystem).run(connection);
 
   // Create the test star
   const starsTable = gameDb.table('stars');
@@ -67,11 +67,11 @@ module.exports = async (connection) => {
     planetary_system_id: planetarySystemKey,
   };
 
-  const {generated_keys: starKeys} = await starsTable
-    .insert(defaultStar)
-    .run(connection);
-
-  const starKey = starKeys[0];
+  const {
+    generated_keys: [
+      starKey,
+    ],
+  } = await starsTable.insert(defaultStar).run(connection);
 
   // Create the test planet
   const bodiesTable = gameDb.table('bodies');
@@ -81,11 +81,11 @@ module.exports = async (connection) => {
     system_id: systemKey,
   };
 
-  const {generated_keys: bodyKeys} = await bodiesTable
-    .insert(defaultBody)
-    .run(connection);
-
-  const bodyKey = bodyKeys[0];
+  const {
+    generated_keys: [
+      bodyKey,
+    ],
+  } = await bodiesTable.insert(defaultBody).run(connection);
 
   // Create the test biome
   const biomesTable = gameDb.table('biomes');
@@ -95,9 +95,9 @@ module.exports = async (connection) => {
     body_id: bodyKey,
   };
 
-  const {generated_keys: biomeKeys} = await biomesTable
-    .insert(defaultBiome)
-    .run(connection);
-
-  const biomeKey = biomeKeys[0];
+  const {
+    generated_keys: [
+      biomeKey,
+    ],
+  } = await biomesTable.insert(defaultBiome).run(connection);
 };
