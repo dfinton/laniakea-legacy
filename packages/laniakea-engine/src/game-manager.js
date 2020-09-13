@@ -134,6 +134,11 @@ const dropGame = async (connection, options) => {
   return true;
 };
 
+const runGame = async (connection, options) => {
+
+};
+
 exports.initGameInfo = initGameInfo;
 exports.initGame = initGame;
 exports.dropGame = dropGame;
+exports.runGame = runGame;

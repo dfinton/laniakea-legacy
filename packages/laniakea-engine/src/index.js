@@ -1,5 +1,5 @@
 const dbConnection = require('./db-connection');
-const {initGameInfo, initGame, dropGame} = require('./game-manager');
+const {initGameInfo, initGame, dropGame, runGame} = require('./game-manager');
 const initTestGame = require('./init-test-game');
 
 const runEngine = async () => {
@@ -15,6 +15,7 @@ const runEngine = async () => {
     saltGenRounds: 10,
   });
 
+  // TODO: remove this once we have a proper setup GUI
   await dropGame(connection, {
     gameDbName: 'test_game',
   });
@@ -24,8 +25,10 @@ const runEngine = async () => {
     gameDbName: 'test_game',
   });
 
-  // TODO: remove this once we have a proper setup GUI
   await initTestGame(connection);
+  // End TODO
+  
+  await runGame(connection);
 };
 
 runEngine();

@@ -100,4 +100,19 @@ module.exports = async (connection) => {
       biomeKey,
     ],
   } = await biomesTable.insert(defaultBiome).run(connection);
+
+  // Create the test population
+  const populationsTable = gameDb.table('populations');
+  const populations = [];
+
+  for (let age = 0; age < 80; age = age + 1) {
+    populations.push({
+      age,
+      count: 10000,
+      biome_id: biomeKey,
+      player_id: playerKey,
+    });
+  }
+
+  populationsTable.insert(populations).run(connection);
 };
