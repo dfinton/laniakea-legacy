@@ -10,7 +10,6 @@
   "author": "David Finton",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "rethinkdb": "^2.4.2"
+    "bcryptjs": "^2.4.3"
   }
 }

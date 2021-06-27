@@ -14,8 +14,5 @@
   "bugs": {
     "url": "https://github.com/dfinton/laniakea/issues"
   },
-  "homepage": "https://github.com/dfinton/laniakea#readme",
-  "devDependencies": {
-    "lerna": "^3.22.1"
-  }
+  "homepage": "https://github.com/dfinton/laniakea#readme"
 }
